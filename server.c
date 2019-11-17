@@ -6,13 +6,12 @@
 #include <sys/types.h>
 #include <string.h>
 
-
 #define BUF_SIZE 80
 #define PORT_NUM 45566
 
 int main(){
 
-    char buffer[BUF_SIZE + 1];
+    char buffer[BUF_SIZE];
     int read_num = 0;
 
     int serv_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,27 +32,9 @@ int main(){
         perror("ERROR on listen");
         return -1;
     }
-    
-    int current_socket = accept(serv_socket, NULL, NULL);
-    if (current_socket < 0){
-        perror("ERROR on accept");
-        return -1;
-    }
-    else{
-        printf("CONNECT!!!!\n");
-        while(1){
-            if ( (read_num = recv(current_socket, buffer, BUF_SIZE, 0)) > 0 ){
-                //printf("Read_NUM is %d\n", read_num);
-                printf("%s", buffer);
-            }
 
-            //break;
-        }
-    
-    }
-
-    /*while(1){
-        int current_socket = accept(serv_socket, NULL, NULL);
+    int current_socket = 0;
+    while( current_socket = accept(serv_socket, NULL, NULL) ){
     
         if (current_socket < 0){
             perror("ERROR on accept");
@@ -61,13 +42,13 @@ int main(){
         }
         else{
             printf("CONNECT!!!!\n");
-            read_num = read(current_socket, buffer, 2);
-            printf("%s", buffer);
+            while( read(current_socket, buffer, sizeof(buffer)) > 0 ){
+                printf("%s", buffer);
+            }
         }
 
-    }*/
+    }
 
-    //printf("%s", buffer);
     printf("CLOSE\n");
     close(serv_socket);
 
