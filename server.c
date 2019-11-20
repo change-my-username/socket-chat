@@ -11,7 +11,8 @@
 
 int main(){
 
-    char buffer[BUF_SIZE];
+    char read_buffer[BUF_SIZE];
+    char write_buffer[BUF_SIZE];
     int read_num = 0;
 
     int serv_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -42,8 +43,19 @@ int main(){
         }
         else{
             printf("CONNECT!!!!\n");
-            while( read(current_socket, buffer, sizeof(buffer)) > 0 ){
-                printf("%s", buffer);
+            int pid = fork();
+            while(1){
+                if (pid == -1) 
+                    printf("PID PIZDEZ\n");
+                if(pid == 0){
+                    while( read(current_socket, read_buffer, sizeof(read_buffer)) > 0 ){
+                        printf("%s", read_buffer);
+                    }
+                }
+                else{
+                    fgets(write_buffer, sizeof(write_buffer), stdin); 
+                    write(current_socket, write_buffer, strlen(write_buffer) + 1);     
+                }
             }
         }
 
