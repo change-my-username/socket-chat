@@ -10,7 +10,8 @@
 
 int main(int argc, char** argv){
 
-    char client_buffer[BUF_SIZE];
+    char read_buffer[BUF_SIZE];
+    char write_buffer[BUF_SIZE];
     int read_num = 0;
 
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -25,8 +26,20 @@ int main(int argc, char** argv){
     }
     else{
         while(1){
-            fgets(client_buffer, sizeof(client_buffer), stdin); 
-            write(server_socket, client_buffer, strlen(client_buffer) + 1); // +1 for string ends symbol, strlen ends up without '\0'
+            int pid = fork();
+            while(1){
+                if (pid == -1) 
+                    printf("PID PIZDEZ\n");
+                if (pid == 0){
+                    while( read(server_socket, read_buffer, sizeof(read_buffer)) > 0 ){
+                        printf("%s", read_buffer);
+                    }
+                }
+                else{
+                    fgets(write_buffer, sizeof(write_buffer), stdin); 
+                    write(server_socket, write_buffer, strlen(write_buffer) + 1);     
+                }
+            }
         }
     }
 
